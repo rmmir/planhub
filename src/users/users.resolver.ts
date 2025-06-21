@@ -7,7 +7,7 @@ export class UsersResolver {
     constructor(private usersService: UsersService) {}
 
     @Query(() => User)
-    async register(@Args('input') id: string) {
+    async getUserById(@Args('input') id: string) {
         return this.usersService.findById(id);
     }
 }

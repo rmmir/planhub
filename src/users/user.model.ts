@@ -24,12 +24,4 @@ export class User {
 
     @Column()
     password: string;
-
-    @Field()
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @Field()
-    @UpdateDateColumn()
-    updatedAt: Date;
 }
