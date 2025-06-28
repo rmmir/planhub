@@ -14,15 +14,13 @@ export class WhiteboardsResolver {
     constructor(private whiteboardsService: WhiteboardsService) {}
 
     @Query(() => [Whiteboard])
-    async getWhiteboards() {
-        return Promise.resolve({} as Whiteboard);
-        // await this.whiteboardsService.getWhiteboards();
+    async getAll() {
+        await this.whiteboardsService.findAll();
     }
 
     @Query(() => Whiteboard)
-    async getWhiteboardById(@Args('input') id: string) {
-        return Promise.resolve({} as Whiteboard);
-        // await this.whiteboardsService.getWhiteboardById(id);
+    async getById(@Args('input') id: string) {
+        await this.whiteboardsService.findById(id);
     }
 
     @Mutation(() => Whiteboard)

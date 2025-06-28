@@ -1,12 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/dist/types/excalidraw/element/types';
+
+const nameValidationMessage = 'Name must be at least 3 characters long';
 
 @InputType()
 export class CreateWhiteboardInput {
     @Field()
     @IsNotEmpty()
     @IsString()
+    @MinLength(3, { message: nameValidationMessage })
     name: string;
 
     @Field({ nullable: true })
@@ -23,6 +26,7 @@ export class UpdateWhiteboardMetadataInput {
     @Field()
     @IsNotEmpty()
     @IsString()
+    @MinLength(3, { message: nameValidationMessage })
     id: string;
 
     @Field({ nullable: true })
