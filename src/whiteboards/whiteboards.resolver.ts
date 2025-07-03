@@ -25,25 +25,27 @@ export class WhiteboardsResolver {
 
     @Mutation(() => Whiteboard)
     async create(@Args('input') createWhiteboardInput: CreateWhiteboardInput) {
-        //return this.whiteboardsService.createWhiteboard(createWhiteboardInput);
+        return this.whiteboardsService.create(createWhiteboardInput);
     }
 
     @Mutation(() => Whiteboard)
     async updateMetadata(
         @Args('input')
-        UpdateWhiteboardMetadataInput: UpdateWhiteboardMetadataInput,
+        updateWhiteboardMetadataInput: UpdateWhiteboardMetadataInput,
     ) {
-        //return this.whiteboardsService.createWhiteboard(createWhiteboardInput);
+        return this.whiteboardsService.updateMetadata(updateWhiteboardMetadataInput);
     }
 
     @Mutation(() => Whiteboard)
     async updateElements(
         @Args('input')
-        UpdateWhiteboardElementsInput: UpdateWhiteboardElementsInput,
+        updateWhiteboardElementsInput: UpdateWhiteboardElementsInput,
     ) {
-        //return this.whiteboardsService.createWhiteboard(createWhiteboardInput);
+        return this.whiteboardsService.updateElements(updateWhiteboardElementsInput);
     }
 
     @Mutation(() => Whiteboard)
-    async delete(@Args('input') deleteWhiteboardInput: DeleteWhiteboardInput) {}
+    async delete(@Args('input') deleteWhiteboardInput: DeleteWhiteboardInput) {
+        return this.whiteboardsService.delete(deleteWhiteboardInput);
+    }
 }

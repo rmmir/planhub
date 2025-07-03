@@ -18,7 +18,6 @@ export class UsersService {
                 { email: createUserInput.email },
             ],
         });
-
         if (existingUser) {
             throw new ConflictException('Username or email already exists');
         }
@@ -27,15 +26,15 @@ export class UsersService {
         return this.usersRepository.save(user);
     }
 
-    async findByUsername(username: string): Promise<User | undefined> {
+    async findByUsername(username: string): Promise<User | null> {
         const user = await this.usersRepository.findOne({
             where: { username },
         });
-        return user || undefined;
+        return user;
     }
 
-    async findById(id: string): Promise<User | undefined> {
+    async findById(id: string): Promise<User | null> {
         const user = await this.usersRepository.findOne({ where: { id } });
-        return user || undefined;
+        return user;
     }
 }
