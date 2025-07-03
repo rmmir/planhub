@@ -76,7 +76,7 @@ export class WhiteboardsService {
     ): Promise<DeletedWhiteboardResponse> {
         const existingWhiteboard = await this.findById(input.id);
 
-        if (existingWhiteboard) {
+        if (!existingWhiteboard) {
             throw new NotFoundException(
                 `Whiteboard with the id: ${input.id} was not found`,
             );
