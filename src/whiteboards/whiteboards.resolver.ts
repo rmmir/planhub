@@ -1,7 +1,9 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { WhiteboardsService } from './whiteboards.service';
 import { Query } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Whiteboard } from './whiteboards.model';
+import { WhiteboardsService } from './whiteboards.service';
 import {
     CreateWhiteboardInput,
     DeleteWhiteboardInput,
@@ -9,6 +11,7 @@ import {
     UpdateWhiteboardMetadataInput,
 } from './dto/whiteboards.input';
 
+@UseGuards(JwtAuthGuard)
 @Resolver()
 export class WhiteboardsResolver {
     constructor(private whiteboardsService: WhiteboardsService) {}
