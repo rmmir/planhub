@@ -1,0 +1,123 @@
+<template>
+    <form
+        @submit.prevent="handleRegister"
+        class="space-y-4 w-full max-w-sm mx-auto"
+    >
+        <h2 class="text-2xl font-bold text-center">{{ title }}</h2>
+
+        <div>
+            <label class="block mb-1 text-sm font-medium">Email</label>
+            <input
+                v-model="form.email"
+                @input="errors.email = ''"
+                type="email"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+            />
+            <p v-if="errors.email" class="text-red-600 text-sm mt-1">
+                {{ errors.email }}
+            </p>
+        </div>
+
+        <div>
+            <label class="block mb-1 text-sm font-medium">Username</label>
+            <input
+                v-model="form.username"
+                @input="errors.username = ''"
+                type="text"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+            />
+            <p v-if="errors.username" class="text-red-600 text-sm mt-1">
+                {{ errors.username }}
+            </p>
+        </div>
+
+        <div>
+            <label class="block mb-1 text-sm font-medium">Password</label>
+            <input
+                v-model="form.password"
+                @input="errors.password = ''"
+                type="password"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+            />
+            <p v-if="errors.password" class="text-red-600 text-sm mt-1">
+                {{ errors.password }}
+            </p>
+        </div>
+
+        <div>
+            <label class="block mb-1 text-sm font-medium"
+                >Confirm Password</label
+            >
+            <input
+                v-model="form.confirmPassword"
+                @input="errors.confirmPassword = ''"
+                type="password"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+            />
+            <p v-if="errors.confirmPassword" class="text-red-600 text-sm mt-1">
+                {{ errors.confirmPassword }}
+            </p>
+        </div>
+
+        <button
+            type="submit"
+            class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+            {{ buttonText }}
+        </button>
+
+        <slot></slot>
+    </form>
+</template>
+
+<script lang="ts" setup>
+import { RegisterForm, registerSchema } from '@/models/AuthForm';
+import { reactive } from 'vue';
+
+interface Props {
+    title: string;
+    buttonText: string;
+}
+
+defineProps<Props>();
+
+const form = reactive<RegisterForm>({
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+});
+const errors = reactive<Partial<Record<keyof RegisterForm, string>>>({
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+});
+
+function handleRegister(event: Event) {
+    event.preventDefault();
+
+    const result = registerSchema.safeParse(form);
+    if (!result.success) {
+        result.error.errors.forEach((error) => {
+            const field = error.path[0] as keyof RegisterForm;
+            errors[field] = error.message;
+        });
+        return;
+    }
+
+    const { email, username, password, confirmPassword } = form;
+    console.log(
+        'Registering with:',
+        username,
+        email,
+        password,
+        confirmPassword,
+    );
+    // TODO: implement registration logic
+}
+</script>

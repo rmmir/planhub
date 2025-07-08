@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="onSubmit" class="space-y-4 w-full max-w-sm mx-auto">
+    <form @submit.prevent="handleLogin" class="space-y-4 w-full max-w-sm mx-auto">
         <h2 class="text-2xl font-bold text-center">{{ title }}</h2>
 
         <div>
@@ -7,16 +7,6 @@
             <input
                 v-model="form.email"
                 type="email"
-                required
-                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-            />
-        </div>
-
-        <div>
-            <label class="block mb-1 text-sm font-medium">Username</label>
-            <input
-                v-model="form.username"
-                type="text"
                 required
                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
             />
@@ -44,27 +34,25 @@
 </template>
 
 <script lang="ts" setup>
+import { LoginForm } from '@/models/AuthForm';
 import { reactive } from 'vue';
 
 interface Props {
     title: string;
     buttonText: string;
-    onSubmitForm: (form: {
-        email: string;
-        username: string;
-        password: string;
-    }) => void;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
-const form = reactive({
+const form = reactive<LoginForm>({
     email: '',
-    username: '',
     password: '',
 });
 
-function onSubmit() {
-    props.onSubmitForm({ ...form });
+function handleLogin(event: Event) {
+    event.preventDefault();
+    const { email, password } = form;
+    console.log('Logging in with:', email, password);
+    // TODO: implement login logic
 }
 </script>
