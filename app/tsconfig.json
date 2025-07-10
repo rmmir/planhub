@@ -3,7 +3,8 @@
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"]
-        }
+        },
+        "module": "nodenext"
     },
     "include": ["src"]
 }

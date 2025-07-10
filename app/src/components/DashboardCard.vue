@@ -7,9 +7,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps } from "vue"
 defineProps<{
-    title: string;
-    description: string;
-}>();
+    title: string
+    description: string
+}>()
 </script>

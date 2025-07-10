@@ -50,15 +50,15 @@
 </template>
 
 <script lang="ts" setup>
-import DashboardCard from '@/components/DashboardCard.vue';
-import { ref, computed } from 'vue';
+import DashboardCard from "@/components/DashboardCard.vue"
+import { ref, computed } from "vue"
 
-const searchQuery = ref('');
+const searchQuery = ref("")
 const cards = ref([
-    { id: 1, title: 'Card One', description: 'Description for card one.' },
-    { id: 2, title: 'Card Two', description: 'Description for card two.' },
-    { id: 3, title: 'Card Three', description: 'Description for card three.' },
-]);
+    { id: 1, title: "Card One", description: "Description for card one." },
+    { id: 2, title: "Card Two", description: "Description for card two." },
+    { id: 3, title: "Card Three", description: "Description for card three." },
+])
 
 const filteredCards = computed(() =>
     cards.value.filter(
@@ -68,7 +68,7 @@ const filteredCards = computed(() =>
                 .includes(searchQuery.value.toLowerCase()) ||
             card.description
                 .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()),
-    ),
-);
+                .includes(searchQuery.value.toLowerCase())
+    )
+)
 </script>

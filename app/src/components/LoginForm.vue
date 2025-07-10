@@ -1,5 +1,8 @@
 <template>
-    <form @submit.prevent="handleLogin" class="space-y-4 w-full max-w-sm mx-auto">
+    <form
+        @submit.prevent="handleLogin"
+        class="space-y-4 w-full max-w-sm mx-auto"
+    >
         <h2 class="text-2xl font-bold text-center">{{ title }}</h2>
 
         <div>
@@ -34,25 +37,25 @@
 </template>
 
 <script lang="ts" setup>
-import { LoginForm } from '@/models/AuthForm';
-import { reactive } from 'vue';
+import { LoginForm } from "@/models/AuthForm"
+import { reactive } from "vue"
 
 interface Props {
-    title: string;
-    buttonText: string;
+    title: string
+    buttonText: string
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 const form = reactive<LoginForm>({
-    email: '',
-    password: '',
-});
+    email: "",
+    password: "",
+})
 
 function handleLogin(event: Event) {
-    event.preventDefault();
-    const { email, password } = form;
-    console.log('Logging in with:', email, password);
+    event.preventDefault()
+    const { email, password } = form
+    console.log("Logging in with:", email, password)
     // TODO: implement login logic
 }
 </script>
