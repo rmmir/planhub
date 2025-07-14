@@ -6,7 +6,7 @@ export class LoginInput {
     @Field()
     @IsNotEmpty()
     @IsString()
-    username: string;
+    email: string;
 
     @Field()
     @IsNotEmpty()

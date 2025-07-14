@@ -15,10 +15,10 @@ export class AuthService {
     ) {}
 
     async validateUser(
-        username: string,
+        email: string,
         password: string,
     ): Promise<UserData | null> {
-        const user = await this.usersService.findByUsername(username);
+        const user = await this.usersService.findByEmail(email);
         if (user && (await bcrypt.compare(password, user.password))) {
             return user;
         }
@@ -28,7 +28,7 @@ export class AuthService {
 
     async login(loginInput: LoginInput) {
         const user = await this.validateUser(
-            loginInput.username,
+            loginInput.email,
             loginInput.password,
         );
         if (!user) {

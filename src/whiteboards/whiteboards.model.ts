@@ -7,6 +7,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/dist/types/excalidraw/element/types';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @ObjectType()
 @Entity()
@@ -31,7 +32,7 @@ export class Whiteboard {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Field(() => [String], { nullable: true })
-    @Column('json', { nullable: true })
+    @Field(() => GraphQLJSONObject, { nullable: true })
+    @Column('jsonb', { nullable: true })
     elements: ExcalidrawElement[];
 }

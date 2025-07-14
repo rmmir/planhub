@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/dist/types/excalidraw/element/types';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 const nameValidationMessage = 'Name must be at least 3 characters long';
 
@@ -16,8 +17,9 @@ export class CreateWhiteboardInput {
     @IsString()
     description?: string;
 
-    @Field({ nullable: true })
+    @Field(() => [GraphQLJSONObject], { nullable: true })
     @IsString()
+    @IsOptional()
     elements?: ExcalidrawElement[];
 }
 
@@ -45,7 +47,7 @@ export class UpdateWhiteboardElementsInput {
     @IsString()
     id: string;
 
-    @Field()
+    @Field(() => [GraphQLJSONObject])
     @IsString()
     elements: ExcalidrawElement[];
 }
