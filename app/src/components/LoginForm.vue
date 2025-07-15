@@ -1,3 +1,27 @@
+<script lang="ts" setup>
+import { LoginForm } from "@/models/AuthForm"
+import { reactive } from "vue"
+
+interface Props {
+    title: string
+    buttonText: string
+}
+
+defineProps<Props>()
+
+const form = reactive<LoginForm>({
+    email: "",
+    password: "",
+})
+
+function handleLogin(event: Event) {
+    event.preventDefault()
+    const { email, password } = form
+    console.log("Logging in with:", email, password)
+    // TODO: implement login logic
+}
+</script>
+
 <template>
     <form
         @submit.prevent="handleLogin"
@@ -35,27 +59,3 @@
         <slot></slot>
     </form>
 </template>
-
-<script lang="ts" setup>
-import { LoginForm } from "@/models/AuthForm"
-import { reactive } from "vue"
-
-interface Props {
-    title: string
-    buttonText: string
-}
-
-defineProps<Props>()
-
-const form = reactive<LoginForm>({
-    email: "",
-    password: "",
-})
-
-function handleLogin(event: Event) {
-    event.preventDefault()
-    const { email, password } = form
-    console.log("Logging in with:", email, password)
-    // TODO: implement login logic
-}
-</script>

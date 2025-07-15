@@ -1,10 +1,10 @@
-import { gql } from '@apollo/client'
+import { gql } from "@apollo/client/core"
 
-const GET_USERS = gql`
-  query {
-    users {
-      id
-      name
+export const GET_USER = gql`
+    query GetUser($id: String!) {
+        getUserById(input: $id) {
+            id
+            username
+        }
     }
-  }
 `

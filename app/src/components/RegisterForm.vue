@@ -1,3 +1,45 @@
+<script lang="ts" setup>
+import { RegisterForm, registerSchema } from "@/models/AuthForm"
+import { reactive } from "vue"
+
+interface Props {
+    title: string
+    buttonText: string
+}
+
+defineProps<Props>()
+
+const form = reactive<RegisterForm>({
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+})
+const errors = reactive<Partial<Record<keyof RegisterForm, string>>>({
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+})
+
+function handleRegister(event: Event) {
+    event.preventDefault()
+
+    const result = registerSchema.safeParse(form)
+    if (!result.success) {
+        result.error.errors.forEach((error) => {
+            const field = error.path[0] as keyof RegisterForm
+            errors[field] = error.message
+        })
+        return
+    }
+
+    const { email, username, password, confirmPassword } = form
+    console.log("Registering with:", username, email, password, confirmPassword)
+    // TODO: implement registration logic
+}
+</script>
+
 <template>
     <form
         @submit.prevent="handleRegister"
@@ -73,45 +115,3 @@
         <slot></slot>
     </form>
 </template>
-
-<script lang="ts" setup>
-import { RegisterForm, registerSchema } from "@/models/AuthForm"
-import { reactive } from "vue"
-
-interface Props {
-    title: string
-    buttonText: string
-}
-
-defineProps<Props>()
-
-const form = reactive<RegisterForm>({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-})
-const errors = reactive<Partial<Record<keyof RegisterForm, string>>>({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-})
-
-function handleRegister(event: Event) {
-    event.preventDefault()
-
-    const result = registerSchema.safeParse(form)
-    if (!result.success) {
-        result.error.errors.forEach((error) => {
-            const field = error.path[0] as keyof RegisterForm
-            errors[field] = error.message
-        })
-        return
-    }
-
-    const { email, username, password, confirmPassword } = form
-    console.log("Registering with:", username, email, password, confirmPassword)
-    // TODO: implement registration logic
-}
-</script>

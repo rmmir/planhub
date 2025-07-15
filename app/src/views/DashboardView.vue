@@ -1,3 +1,27 @@
+<script lang="ts" setup>
+import DashboardCard from "@/components/DashboardCard.vue"
+import { ref, computed } from "vue"
+
+const searchQuery = ref("")
+const cards = ref([
+    { id: 1, title: "Card One", description: "Description for card one." },
+    { id: 2, title: "Card Two", description: "Description for card two." },
+    { id: 3, title: "Card Three", description: "Description for card three." },
+])
+
+const filteredCards = computed(() =>
+    cards.value.filter(
+        (card) =>
+            card.title
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase()) ||
+            card.description
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase())
+    )
+)
+</script>
+
 <template>
     <header
         class="flex justify-between items-center px-8 py-4 bg-gray-100 border-b border-gray-200"
@@ -48,27 +72,3 @@
         </div>
     </section>
 </template>
-
-<script lang="ts" setup>
-import DashboardCard from "@/components/DashboardCard.vue"
-import { ref, computed } from "vue"
-
-const searchQuery = ref("")
-const cards = ref([
-    { id: 1, title: "Card One", description: "Description for card one." },
-    { id: 2, title: "Card Two", description: "Description for card two." },
-    { id: 3, title: "Card Three", description: "Description for card three." },
-])
-
-const filteredCards = computed(() =>
-    cards.value.filter(
-        (card) =>
-            card.title
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            card.description
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase())
-    )
-)
-</script>
