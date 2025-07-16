@@ -1,13 +1,18 @@
 <script lang="ts" setup>
 import DashboardCard from "@/components/DashboardCard.vue"
+import { router } from "@/router"
 import { ref, computed } from "vue"
 
 const searchQuery = ref("")
+const showProfileDropdown = ref(false)
 const cards = ref([
     { id: 1, title: "Card One", description: "Description for card one." },
     { id: 2, title: "Card Two", description: "Description for card two." },
     { id: 3, title: "Card Three", description: "Description for card three." },
 ])
+
+const toggleDropdown = () =>
+    (showProfileDropdown.value = !showProfileDropdown.value)
 
 const filteredCards = computed(() =>
     cards.value.filter(
@@ -20,6 +25,11 @@ const filteredCards = computed(() =>
                 .includes(searchQuery.value.toLowerCase())
     )
 )
+
+function logout() {
+    localStorage.removeItem("access_token")
+    router.push("/login")
+}
 </script>
 
 <template>
@@ -40,23 +50,47 @@ const filteredCards = computed(() =>
                 </ul>
             </nav>
         </div>
-        <div class="font-semibold text-gray-600">
-            <span class="profile-user">User</span>
+        <div class="relative">
+            <button
+                @click="toggleDropdown"
+                class="font-semibold text-gray-600 hover:text-blue-600 focus:outline-none cursor-pointer"
+            >
+                User
+            </button>
+
+            <div
+                v-if="showProfileDropdown"
+                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+            >
+                <ul class="py-1">
+                    <li>
+                        <a
+                            href="/settings"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <button
+                            @click="logout"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        >
+                            Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
 
-    <section class="flex justify-center items-center my-8 gap-2">
+    <section class="flex justify-start items-center my-8 ml-8">
         <input
             type="text"
             placeholder="Search..."
             class="px-3 py-2 border border-gray-300 rounded-md min-w-[240px] focus:outline-none focus:ring-2 focus:ring-blue-200"
             v-model="searchQuery"
         />
-        <button
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-        >
-            Search
-        </button>
     </section>
 
     <section class="flex flex-wrap gap-6 justify-center mx-8">

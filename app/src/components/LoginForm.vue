@@ -1,24 +1,45 @@
 <script lang="ts" setup>
-import { LoginForm } from "@/models/AuthForm"
 import { reactive } from "vue"
+import { useMutation } from "@vue/apollo-composable"
+import { LOGIN } from "@/api/auth"
+import { LoginForm } from "@/models/AuthForm"
+import { FetchResult } from "@apollo/client/core"
+import { router } from "@/router"
 
-interface Props {
+type Props = {
     title: string
     buttonText: string
 }
 
+type LoginResult = FetchResult<{ login: { access_token: string } }>
+
 defineProps<Props>()
 
+const { mutate } = useMutation(LOGIN)
 const form = reactive<LoginForm>({
     email: "",
     password: "",
 })
+const errors = reactive({ message: "" })
 
-function handleLogin(event: Event) {
+async function handleLogin(event: Event) {
     event.preventDefault()
     const { email, password } = form
-    console.log("Logging in with:", email, password)
-    // TODO: implement login logic
+
+    try {
+        const result: LoginResult = await mutate({
+            input: {
+                email,
+                password,
+            },
+        })
+
+        localStorage.setItem("access_token", result.data.login.access_token)
+
+        router.push("/")
+    } catch (err) {
+        errors.message = err
+    }
 }
 </script>
 
@@ -33,6 +54,7 @@ function handleLogin(event: Event) {
             <label class="block mb-1 text-sm font-medium">Email</label>
             <input
                 v-model="form.email"
+                @input="errors.message = ''"
                 type="email"
                 required
                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
@@ -43,11 +65,16 @@ function handleLogin(event: Event) {
             <label class="block mb-1 text-sm font-medium">Password</label>
             <input
                 v-model="form.password"
+                @input="errors.message = ''"
                 type="password"
                 required
                 class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
             />
         </div>
+
+        <p v-if="errors.message" class="text-red-600 text-sm mt-1">
+            {{ errors.message }}
+        </p>
 
         <button
             type="submit"
@@ -56,6 +83,11 @@ function handleLogin(event: Event) {
             {{ buttonText }}
         </button>
 
-        <slot></slot>
+        <p class="text-sm text-center mt-4">
+            Don't have an account?
+            <router-link to="/register" class="text-blue-600 hover:underline">
+                Register
+            </router-link>
+        </p>
     </form>
 </template>

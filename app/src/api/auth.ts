@@ -8,3 +8,11 @@ export const GET_USER = gql`
         }
     }
 `
+
+export const LOGIN = gql`
+    mutation Login($input: LoginInput!) {
+        login(input: $input) {
+            access_token
+        }
+    }
+`

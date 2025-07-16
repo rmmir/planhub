@@ -16,7 +16,7 @@ export const router = createRouter({
 })
 
 router.beforeEach((to, _, next) => {
-    const token = localStorage.getItem("jwt-token")
+    const token = localStorage.getItem("access_token")
 
     if (to.meta.requiresAuth && !token) {
         next("/login")

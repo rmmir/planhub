@@ -112,6 +112,11 @@ function handleRegister(event: Event) {
             {{ buttonText }}
         </button>
 
-        <slot></slot>
+        <p class="text-sm text-center mt-4">
+            Already have an account?
+            <router-link to="/login" class="text-blue-600 hover:underline">
+                Log In
+            </router-link>
+        </p>
     </form>
 </template>
