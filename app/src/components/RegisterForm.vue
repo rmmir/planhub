@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { REGISTER } from "@/api/auth"
 import { RegisterForm, registerSchema } from "@/models/AuthForm"
+import { FetchResult } from "@apollo/client/core"
+import { useMutation } from "@vue/apollo-composable"
 import { reactive } from "vue"
 
 interface Props {
@@ -8,21 +11,24 @@ interface Props {
 }
 
 defineProps<Props>()
+type RegisterResult = FetchResult<{ login: { username: string } }>
 
+const { mutate } = useMutation(REGISTER)
 const form = reactive<RegisterForm>({
     email: "",
     username: "",
     password: "",
     confirmPassword: "",
 })
-const errors = reactive<Partial<Record<keyof RegisterForm, string>>>({
+const errors = reactive<Partial<Record<keyof RegisterForm | "message", string>>>({
     email: "",
     username: "",
     password: "",
     confirmPassword: "",
+    message: "",
 })
 
-function handleRegister(event: Event) {
+async function handleRegister(event: Event) {
     event.preventDefault()
 
     const result = registerSchema.safeParse(form)
@@ -35,6 +41,18 @@ function handleRegister(event: Event) {
     }
 
     const { email, username, password, confirmPassword } = form
+
+    try {
+        const result: RegisterResult = await mutate({
+            input: {
+                username,
+                email,
+                password,
+            },
+        })
+    } catch (err) {
+        errors.message = err
+    }
     console.log("Registering with:", username, email, password, confirmPassword)
     // TODO: implement registration logic
 }
