@@ -1,19 +1,17 @@
 <script lang="ts" setup>
+import { reactive } from "vue"
+import { useToast } from "vue-toastification"
+import { useRouter } from "vue-router"
 import { REGISTER } from "@/api/auth"
 import { RegisterForm, registerSchema } from "@/models/AuthForm"
 import { FetchResult } from "@apollo/client/core"
 import { useMutation } from "@vue/apollo-composable"
-import { reactive } from "vue"
 
-interface Props {
-    title: string
-    buttonText: string
-}
-
-defineProps<Props>()
-type RegisterResult = FetchResult<{ login: { username: string } }>
+type RegisterResult = FetchResult<{ register: { message: string } }>
 
 const { mutate } = useMutation(REGISTER)
+const router = useRouter()
+const toast = useToast()
 const form = reactive<RegisterForm>({
     email: "",
     username: "",
@@ -50,20 +48,18 @@ async function handleRegister(event: Event) {
                 password,
             },
         })
+
+        toast.success(result.data.register.message)
+        router.push("/login")
     } catch (err) {
-        errors.message = err
+        errors.message = err.graphQLErrors?.[0]?.message
     }
-    console.log("Registering with:", username, email, password, confirmPassword)
-    // TODO: implement registration logic
 }
 </script>
 
 <template>
-    <form
-        @submit.prevent="handleRegister"
-        class="space-y-4 w-full max-w-sm mx-auto"
-    >
-        <h2 class="text-2xl font-bold text-center">{{ title }}</h2>
+    <form @submit.prevent="handleRegister" class="space-y-4 w-full max-w-sm mx-auto">
+        <h2 class="text-2xl font-bold text-center">Register</h2>
 
         <div>
             <label class="block mb-1 text-sm font-medium">Email</label>
@@ -108,9 +104,7 @@ async function handleRegister(event: Event) {
         </div>
 
         <div>
-            <label class="block mb-1 text-sm font-medium"
-                >Confirm Password</label
-            >
+            <label class="block mb-1 text-sm font-medium">Confirm Password</label>
             <input
                 v-model="form.confirmPassword"
                 @input="errors.confirmPassword = ''"
@@ -123,18 +117,20 @@ async function handleRegister(event: Event) {
             </p>
         </div>
 
+        <p v-if="errors.message" class="text-red-600 text-sm mt-1">
+            {{ errors.message }}
+        </p>
+
         <button
             type="submit"
             class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
-            {{ buttonText }}
+            Create Account
         </button>
 
         <p class="text-sm text-center mt-4">
             Already have an account?
-            <router-link to="/login" class="text-blue-600 hover:underline">
-                Log In
-            </router-link>
+            <router-link to="/login" class="text-blue-600 hover:underline">Log In</router-link>
         </p>
     </form>
 </template>

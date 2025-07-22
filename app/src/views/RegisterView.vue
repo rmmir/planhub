@@ -4,6 +4,6 @@ import RegisterForm from "@/components/RegisterForm.vue"
 
 <template>
     <div class="flex items-center justify-center h-screen bg-gray-100">
-        <RegisterForm title="Register" button-text="Create Account" />
+        <RegisterForm />
     </div>
 </template>

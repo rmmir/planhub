@@ -1,21 +1,15 @@
 <script lang="ts" setup>
 import { reactive } from "vue"
+import { useRouter } from "vue-router"
 import { useMutation } from "@vue/apollo-composable"
 import { LOGIN } from "@/api/auth"
 import { LoginForm } from "@/models/AuthForm"
 import { FetchResult } from "@apollo/client/core"
-import { router } from "@/router"
-
-type Props = {
-    title: string
-    buttonText: string
-}
 
 type LoginResult = FetchResult<{ login: { access_token: string } }>
 
-defineProps<Props>()
-
 const { mutate } = useMutation(LOGIN)
+const router = useRouter()
 const form = reactive<LoginForm>({
     email: "",
     password: "",
@@ -38,17 +32,14 @@ async function handleLogin(event: Event) {
 
         router.push("/")
     } catch (err) {
-        errors.message = err
+        errors.message = err.graphQLErrors?.[0]?.message
     }
 }
 </script>
 
 <template>
-    <form
-        @submit.prevent="handleLogin"
-        class="space-y-4 w-full max-w-sm mx-auto"
-    >
-        <h2 class="text-2xl font-bold text-center">{{ title }}</h2>
+    <form @submit.prevent="handleLogin" class="space-y-4 w-full max-w-sm mx-auto">
+        <h2 class="text-2xl font-bold text-center">Login</h2>
 
         <div>
             <label class="block mb-1 text-sm font-medium">Email</label>
@@ -80,14 +71,12 @@ async function handleLogin(event: Event) {
             type="submit"
             class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
-            {{ buttonText }}
+            Sign In
         </button>
 
         <p class="text-sm text-center mt-4">
             Don't have an account?
-            <router-link to="/register" class="text-blue-600 hover:underline">
-                Register
-            </router-link>
+            <router-link to="/register" class="text-blue-600 hover:underline">Register</router-link>
         </p>
     </form>
 </template>

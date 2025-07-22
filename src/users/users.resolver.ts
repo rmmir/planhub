@@ -11,7 +11,6 @@ export class UsersResolver {
 
     @Query(() => User)
     async getUserById(@Args('input') id: string) {
-        console.log(id)
         return this.usersService.findById(id);
     }
 }

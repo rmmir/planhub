@@ -1,5 +1,5 @@
 <template>
     <div class="min-h-screen bg-gray-100 text-gray-800">
-        <router-view />
+        <router-view :key="$route.fullPath" />
     </div>
 </template>
