@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -10,6 +10,11 @@ import {
     UpdateWhiteboardElementsInput,
     UpdateWhiteboardMetadataInput,
 } from './dto/whiteboards.input';
+import {
+    CreatedWhiteboardResponse,
+    UpdatedWhiteboardElementsResponse,
+    UpdatedWhiteboardMetadataResponse,
+} from './dto/whiteboards.response';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -18,37 +23,57 @@ export class WhiteboardsResolver {
 
     @Query(() => [Whiteboard])
     async getAll() {
-        await this.whiteboardsService.findAll();
+        return await this.whiteboardsService.findAll();
     }
 
     @Query(() => Whiteboard)
     async getById(@Args('input') id: string) {
-        await this.whiteboardsService.findById(id);
+        return await this.whiteboardsService.findById(id);
     }
 
-    @Mutation(() => Whiteboard)
-    async create(@Args('input') createWhiteboardInput: CreateWhiteboardInput) {
-        return this.whiteboardsService.create(createWhiteboardInput);
+    @Mutation(() => CreatedWhiteboardResponse)
+    async create(
+        @Args('input') createWhiteboardInput: CreateWhiteboardInput,
+        @Context() ctx,
+    ) {
+        return this.whiteboardsService.create(
+            createWhiteboardInput,
+            ctx.req.user.id,
+        );
     }
 
-    @Mutation(() => Whiteboard)
+    @Mutation(() => UpdatedWhiteboardMetadataResponse)
     async updateMetadata(
         @Args('input')
         updateWhiteboardMetadataInput: UpdateWhiteboardMetadataInput,
+        @Context() ctx,
     ) {
-        return this.whiteboardsService.updateMetadata(updateWhiteboardMetadataInput);
+        return this.whiteboardsService.updateMetadata(
+            updateWhiteboardMetadataInput,
+            ctx.req.user.id,
+        );
     }
 
-    @Mutation(() => Whiteboard)
+    @Mutation(() => UpdatedWhiteboardElementsResponse)
     async updateElements(
         @Args('input')
         updateWhiteboardElementsInput: UpdateWhiteboardElementsInput,
+        @Context() ctx,
     ) {
-        return this.whiteboardsService.updateElements(updateWhiteboardElementsInput);
+        return this.whiteboardsService.updateElements(
+            updateWhiteboardElementsInput,
+            ctx.req.user.id,
+        );
     }
 
     @Mutation(() => Whiteboard)
-    async delete(@Args('input') deleteWhiteboardInput: DeleteWhiteboardInput) {
-        return this.whiteboardsService.delete(deleteWhiteboardInput);
+    async delete(
+        @Args('input') deleteWhiteboardInput: DeleteWhiteboardInput,
+        @Context() ctx,
+    ) {
+        return this.whiteboardsService.delete(
+            deleteWhiteboardInput,
+            ctx.req.user.id,
+        );
     }
 }

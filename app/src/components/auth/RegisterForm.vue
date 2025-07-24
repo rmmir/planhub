@@ -26,9 +26,7 @@ const errors = reactive<Partial<Record<keyof RegisterForm | "message", string>>>
     message: "",
 })
 
-async function handleRegister(event: Event) {
-    event.preventDefault()
-
+async function handleRegister() {
     const result = registerSchema.safeParse(form)
     if (!result.success) {
         result.error.errors.forEach((error) => {

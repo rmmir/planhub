@@ -11,9 +11,11 @@
     },
     "dependencies": {
         "@apollo/client": "^3.13.8",
+        "@headlessui/vue": "^1.7.23",
         "@tailwindcss/vite": "^4.1.11",
         "@vue/apollo-composable": "^4.2.2",
         "graphql-tag": "^2.12.6",
+        "jwt-decode": "^4.0.0",
         "tailwindcss": "^4.1.11",
         "vue": "^3.5.17",
         "vue-router": "^4.5.1",

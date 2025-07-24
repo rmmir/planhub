@@ -29,60 +29,74 @@ export class WhiteboardsService {
 
     async create(
         input: CreateWhiteboardInput,
+        userId: string,
     ): Promise<CreatedWhiteboardResponse> {
-        const existingWhiteboard = await this.findByName(input.name);
+        await this.checkUserExists(userId);
 
+        const existingWhiteboard = await this.findByName(input.name);
         if (existingWhiteboard) {
             throw new ConflictException(
-                `Whiteboard with the name: ${input.name} already exists`,
+                `Whiteboard with the name "${input.name}" already exists`,
             );
         }
 
-        const whiteboard = this.whiteboardsRepository.create(input);
-        this.whiteboardsRepository.save(whiteboard);
+        const whiteboard = this.whiteboardsRepository.create({
+            ...input,
+            userId,
+        });
+        const result = await this.whiteboardsRepository.save(whiteboard);
 
         return {
-            id: whiteboard.id,
+            id: result.id,
             message: 'Whiteboard created successfully',
         };
     }
 
     async updateMetadata(
         input: UpdateWhiteboardMetadataInput,
+        userId: string,
     ): Promise<UpdatedWhiteboardMetadataResponse> {
+        await this.checkUserExists(userId);
+
         const { id, ...updatedData } = input;
 
         return this.updateWhiteboardPartial(
             id,
-            updatedData,
+            { ...updatedData, userId },
             'Whiteboard metadata updated successfully',
         );
     }
 
     async updateElements(
         input: UpdateWhiteboardElementsInput,
+        userId: string,
     ): Promise<UpdatedWhiteboardElementsResponse> {
+        await this.checkUserExists(userId);
+
         const { id, ...updatedData } = input;
 
         return this.updateWhiteboardPartial(
             id,
-            updatedData,
+            { ...updatedData, userId },
             'Whiteboard elements updated successfully',
         );
     }
 
     async delete(
         input: DeleteWhiteboardInput,
+        userId: string,
     ): Promise<DeletedWhiteboardResponse> {
-        const existingWhiteboard = await this.findById(input.id);
+        await this.checkUserExists(userId);
 
-        if (!existingWhiteboard) {
+        const existingWhiteboard = await this.findById(input.id);
+        const deleteResult = await this.whiteboardsRepository.delete(
+            existingWhiteboard.id,
+        );
+        if (!deleteResult.affected || deleteResult.affected === 0) {
             throw new NotFoundException(
-                `Whiteboard with the id: ${input.id} was not found`,
+                `Whiteboard with id "${existingWhiteboard.id}" could not be deleted or was not found`,
             );
         }
-
-        this.whiteboardsRepository.delete(input.id);
 
         return {
             id: input.id,
@@ -95,10 +109,18 @@ export class WhiteboardsService {
         return whiteboards;
     }
 
-    async findById(id: string): Promise<Whiteboard | null> {
-        const whiteboard = await this.whiteboardsRepository.findOneBy({ id });
+    async findById(id: string): Promise<Whiteboard> {
+        const existingWhiteboard = await this.whiteboardsRepository.findOneBy({
+            id,
+        });
 
-        return whiteboard;
+        if (!existingWhiteboard) {
+            throw new NotFoundException(
+                `Whiteboard with the id "${id}" was not found`,
+            );
+        }
+
+        return existingWhiteboard;
     }
 
     async findByName(name: string): Promise<Whiteboard | null> {
@@ -113,20 +135,34 @@ export class WhiteboardsService {
         successMessage: string,
     ): Promise<{ id: string; message: string }> {
         const currentWhiteboard = await this.findById(id);
-        if (!currentWhiteboard) {
-            throw new NotFoundException(
-                `Whiteboard with the id: ${id} was not found`,
-            );
-        }
-
-        await this.whiteboardsRepository.update(
-            id,
+        const updateResult = await this.whiteboardsRepository.update(
+            currentWhiteboard.id,
             data as QueryDeepPartialEntity<Whiteboard>,
         );
+        if (!updateResult.affected || updateResult.affected === 0) {
+            throw new NotFoundException(
+                `Whiteboard with id "${currentWhiteboard.id}" could not be updated or was not found`,
+            );
+        }
 
         return {
             id,
             message: successMessage,
         };
+    }
+
+    private async checkUserExists(userId: string): Promise<void> {
+        if (!userId) {
+            throw new ConflictException(
+                'User ID is required to create a whiteboard',
+            );
+        }
+
+        const user = await this.whiteboardsRepository.manager.findOne('User', {
+            where: { id: userId },
+        });
+        if (!user) {
+            throw new NotFoundException(`User with ID "${userId}" not found`);
+        }
     }
 }

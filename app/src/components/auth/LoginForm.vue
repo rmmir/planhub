@@ -16,8 +16,7 @@ const form = reactive<LoginForm>({
 })
 const errors = reactive({ message: "" })
 
-async function handleLogin(event: Event) {
-    event.preventDefault()
+async function handleLogin() {
     const { email, password } = form
 
     try {

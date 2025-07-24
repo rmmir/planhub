@@ -1,8 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Whiteboard } from 'src/whiteboards/whiteboards.model';
 import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -24,4 +26,8 @@ export class User {
 
     @Column()
     password: string;
+
+    @Field(() => [Whiteboard], { nullable: true })
+    @OneToMany(() => Whiteboard, (whiteboard) => whiteboard.userId)
+    whiteboards: Whiteboard[];
 }
