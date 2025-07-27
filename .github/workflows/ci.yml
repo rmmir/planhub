@@ -1,0 +1,58 @@
+name: Planhub CI
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Enable Corepack and install pnpm
+              run: |
+                  corepack enable
+                  corepack prepare pnpm@latest --activate
+
+            - name: Install root dependencies
+              run: pnpm install
+
+            - name: Install frontend dependencies
+              run: pnpm install
+              working-directory: ./app
+
+            - name: Lint backend
+              run: pnpm run lint
+
+            - name: Lint frontend
+              run: pnpm run lint
+              working-directory: ./app
+
+            - name: Test backend with coverage
+              run: pnpm run test:cov
+
+            - name: Upload backend coverage
+              uses: actions/upload-artifact@v4
+              with:
+                  name: backend-coverage
+                  path: coverage/
+
+            - name: Test frontend with coverage
+              run: pnpm run test:unit:cov
+              working-directory: ./app
+
+            - name: Upload frontend coverage
+              uses: actions/upload-artifact@v4
+              with:
+                  name: frontend-coverage
+                  path: app/coverage/
+
+            - name: Build backend
+              run: pnpm run build
+
+            - name: Build frontend
+              run: pnpm run build
+              working-directory: ./app
