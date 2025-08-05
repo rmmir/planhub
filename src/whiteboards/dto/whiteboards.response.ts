@@ -10,7 +10,7 @@ class BasicResponse {
 }
 
 @ObjectType()
-export class CreatedWhiteboardResponse extends BasicResponse {} 
+export class CreatedWhiteboardResponse extends BasicResponse {}
 
 @ObjectType()
 export class UpdatedWhiteboardMetadataResponse extends BasicResponse {}

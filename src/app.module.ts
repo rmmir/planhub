@@ -24,7 +24,7 @@ import { WhiteboardsModule } from './whiteboards/whiteboards.module';
             }),
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
-            context: ({ req }) => ({ req }),
+            context: ({ req }: { req: Request }) => ({ req }),
             driver: ApolloDriver,
             autoSchemaFile: true,
             graphiql: true,

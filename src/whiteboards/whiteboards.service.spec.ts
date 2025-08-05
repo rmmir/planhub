@@ -24,6 +24,8 @@ const mockWhiteboard = {
     metadata: {},
 };
 
+const mockUserId = '123';
+
 describe('WhiteboardsService', () => {
     let service: WhiteboardsService;
     let repository: ReturnType<typeof mockRepository>;
@@ -54,7 +56,10 @@ describe('WhiteboardsService', () => {
             repository.save.mockResolvedValue({ ...mockWhiteboard });
 
             const input = { name: 'Test Board' };
-            const result = await service.create(input as CreateWhiteboardInput);
+            const result = await service.create(
+                input as CreateWhiteboardInput,
+                mockUserId,
+            );
 
             expect(repository.create).toHaveBeenCalledWith(input);
             expect(repository.save).toHaveBeenCalled();
@@ -68,7 +73,10 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(mockWhiteboard);
 
             await expect(
-                service.create({ name: 'Test Board' } as CreateWhiteboardInput),
+                service.create(
+                    { name: 'Test Board' } as CreateWhiteboardInput,
+                    mockUserId,
+                ),
             ).rejects.toThrow(
                 'Whiteboard with the name: Test Board already exists',
             );
@@ -85,7 +93,7 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(mockWhiteboard);
             repository.update.mockResolvedValue({});
 
-            const result = await service.updateMetadata(input);
+            const result = await service.updateMetadata(input, mockUserId);
 
             expect(repository.update).toHaveBeenCalledWith('1', {
                 name: 'name',
@@ -101,7 +109,7 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(null);
 
             await expect(
-                service.updateMetadata({ id: '2', name: 'test' }),
+                service.updateMetadata({ id: '2', name: 'test' }, mockUserId),
             ).rejects.toThrow('Whiteboard with the id: 2 was not found');
         });
     });
@@ -115,7 +123,10 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(mockWhiteboard);
             repository.update.mockResolvedValue({});
 
-            const result = await service.updateElements(input as any);
+            const result = await service.updateElements(
+                input as any,
+                mockUserId,
+            );
 
             expect(repository.update).toHaveBeenCalledWith('1', {
                 elements: {},
@@ -130,7 +141,10 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(null);
 
             await expect(
-                service.updateElements({ id: '2', elements: [] } as any),
+                service.updateElements(
+                    { id: '2', elements: [] } as any,
+                    mockUserId,
+                ),
             ).rejects.toThrow('Whiteboard with the id: 2 was not found');
         });
     });
@@ -140,7 +154,7 @@ describe('WhiteboardsService', () => {
             const input: DeleteWhiteboardInput = { id: '2' };
             repository.findOneBy.mockResolvedValue(null);
 
-            await expect(service.delete(input)).rejects.toThrow(
+            await expect(service.delete(input, mockUserId)).rejects.toThrow(
                 'Whiteboard with the id: 2 was not found',
             );
         });
@@ -150,7 +164,7 @@ describe('WhiteboardsService', () => {
             repository.findOneBy.mockResolvedValue(mockWhiteboard);
             repository.delete.mockResolvedValue({});
 
-            const result = await service.delete(input);
+            const result = await service.delete(input, mockUserId);
 
             expect(repository.delete).toHaveBeenCalledWith('1');
             expect(result).toEqual({
