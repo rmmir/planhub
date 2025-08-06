@@ -1,14 +1,18 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch } from "vue"
+import { ref, computed, onMounted } from "vue"
 import { useToast } from "vue-toastification"
-import { router } from "@/router"
 import { CREATE_WHITEBOARD, GET_WHITEBOARDS } from "@/api/whiteboard"
 import { useMutation, useQuery } from "@vue/apollo-composable"
 import { FetchResult } from "@apollo/client/core"
+import HeaderMenu from "@/components/common/HeaderMenu.vue"
 import DashboardCard from "@/components/whiteboard/DashboardCard.vue"
 import CreateWhiteboardModal from "@/components/whiteboard/CreateWhiteboardModal.vue"
 
 type CreateWhiteboardResult = FetchResult<{ create: { message: string } }>
+type WhiteboardPayload = {
+    name: string
+    description: string
+}
 type Whiteboard = {
     id: string
     name: string
@@ -19,11 +23,8 @@ type Whiteboard = {
 const { mutate } = useMutation(CREATE_WHITEBOARD)
 const { result, loading, error, refetch } = useQuery(GET_WHITEBOARDS)
 const toast = useToast()
-const isAddWhiteboardModalOpen = ref(false)
 const searchQuery = ref("")
-const showProfileDropdown = ref(false)
-
-const toggleDropdown = () => (showProfileDropdown.value = !showProfileDropdown.value)
+const isAddWhiteboardModalOpen = ref(false)
 
 const whiteboards = computed(() => {
     return result.value?.getAll || []
@@ -41,30 +42,19 @@ const filteredBoards = computed(() => {
     )
 })
 
-watch(error, (newError) => {
-    if (newError) {
-        toast.error("Failed to load whiteboards")
-    }
-})
-
 onMounted(() => {
     !result.value && refetch()
 })
-
-function logout() {
-    localStorage.removeItem("access_token")
-    router.push("/login")
-}
 
 function handleClose() {
     isAddWhiteboardModalOpen.value = false
 }
 
-function handleEditWhiteboardModal(payload: { name: string; description: string }) {
+function handleEditWhiteboardModal(payload: WhiteboardPayload) {
     console.log("Edit Whiteboard Modal Opened", payload)
 }
 
-async function handleCreate(payload) {
+async function handleCreate(payload: WhiteboardPayload) {
     try {
         const result: CreateWhiteboardResult = await mutate({
             input: {
@@ -73,9 +63,7 @@ async function handleCreate(payload) {
             },
         })
 
-        console.log(result.data)
         toast.success(result.data?.create?.message || "Whiteboard created successfully")
-
         await refetch()
     } catch (error) {
         toast.error("Failed to create whiteboard")
@@ -86,52 +74,7 @@ async function handleCreate(payload) {
 </script>
 
 <template>
-    <div class="flex justify-between items-center px-8 py-4 bg-gray-100 border-b border-gray-200">
-        <div class="flex items-center">
-            <img src="" alt="Logo" class="h-10 mr-6" />
-            <nav>
-                <ul class="flex gap-6 m-0 p-0 list-none">
-                    <li>
-                        <a href="#" class="text-gray-800 font-medium hover:text-blue-600">
-                            Dashboard
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="relative">
-            <button
-                @click="toggleDropdown"
-                class="font-semibold text-gray-600 hover:text-blue-600 focus:outline-none cursor-pointer"
-            >
-                User
-            </button>
-
-            <div
-                v-if="showProfileDropdown"
-                class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-50"
-            >
-                <ul class="py-1">
-                    <li>
-                        <a
-                            href="/settings"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                            Settings
-                        </a>
-                    </li>
-                    <li>
-                        <button
-                            @click="logout"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        >
-                            Logout
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <HeaderMenu />
 
     <div class="flex justify-start items-center my-8 ml-8">
         <input
@@ -168,6 +111,7 @@ async function handleCreate(payload) {
             class="bg-white border border-gray-200 rounded-lg w-64 shadow-sm flex flex-col overflow-hidden"
         >
             <DashboardCard
+                :id="card.id"
                 :name="card.name"
                 :description="card.description"
                 @openEditWhiteboardModal="handleEditWhiteboardModal"

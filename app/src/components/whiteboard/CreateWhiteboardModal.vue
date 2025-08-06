@@ -1,3 +1,32 @@
+<script setup>
+import { ref } from "vue"
+import Modal from "../common/Modal.vue"
+
+defineProps({
+    isOpen: Boolean,
+})
+
+const emit = defineEmits(["close", "create"])
+
+const name = ref("")
+const description = ref("")
+
+const closeModal = () => {
+    resetForm()
+    emit("close")
+}
+
+const submitForm = () => {
+    emit("create", { name: name.value, description: description.value })
+    closeModal()
+}
+
+const resetForm = () => {
+    name.value = ""
+    description.value = ""
+}
+</script>
+
 <template>
     <Modal :isOpen="isOpen" :onClose="closeModal">
         <h2 class="text-lg font-semibold">Create New Whiteboard</h2>
@@ -28,42 +57,20 @@
             </div>
 
             <div class="flex justify-end gap-2 pt-2">
-                <button type="button" @click="closeModal" class="px-4 py-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-300 focus:outline-none">
+                <button
+                    type="button"
+                    @click="closeModal"
+                    class="px-4 py-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-300 focus:outline-none"
+                >
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 focus:outline-none">
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 focus:outline-none"
+                >
                     Create
                 </button>
             </div>
         </form>
     </Modal>
 </template>
-
-<script setup>
-import { ref } from "vue"
-import Modal from "../common/Modal.vue"
-
-defineProps({
-    isOpen: Boolean,
-})
-
-const emit = defineEmits(["close", "create"])
-
-const name = ref("")
-const description = ref("")
-
-const closeModal = () => {
-    resetForm()
-    emit("close")
-}
-
-const submitForm = () => {
-    emit("create", { name: name.value, description: description.value })
-    closeModal()
-}
-
-const resetForm = () => {
-    name.value = ""
-    description.value = ""
-}
-</script>
